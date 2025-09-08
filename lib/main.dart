@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_restaurant/common/component/custom_text_form_field.dart';
+import 'package:flutter_restaurant/feat/user/view/login_screen.dart';
 
 void main() {
   runApp(
@@ -17,23 +17,7 @@ class _App extends StatelessWidget {
         fontFamily: 'NotoSans',
       ),
       debugShowCheckedModeBanner: false,
-      home: Scaffold(
-        backgroundColor: Colors.white,
-        body: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            CustomTextFormField(
-              hintText: '이메일을 입력해주세요',
-              onChanged: (String value) {},
-            ),
-            CustomTextFormField(
-              hintText: '비밀번호를 입력해주세요',
-              obscureText: true,
-              onChanged: (String value) {},
-            ),
-          ],
-        ),
-      ),
+      home: LoginScreen(),
     );
   }
 }
