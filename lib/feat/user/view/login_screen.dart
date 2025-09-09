@@ -5,9 +5,11 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_restaurant/common/component/custom_text_form_field.dart';
 import 'package:flutter_restaurant/common/const/colors.dart';
+import 'package:flutter_restaurant/common/const/data.dart';
 import 'package:flutter_restaurant/common/layout/default_layout.dart';
 import 'package:flutter_restaurant/common/util/json_viewer.dart';
 import 'package:flutter_restaurant/common/view/root_tab.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -22,6 +24,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final secureStorage = FlutterSecureStorage();
     final dio = Dio();
 
     // localhost
@@ -80,6 +83,18 @@ class _LoginScreenState extends State<LoginScreen> {
                     );
 
                     // JsonViewer.printPretty(resp.data);
+
+                    final refreshToken = resp.data['refreshToken'];
+                    final accessToken = resp.data['accessToken'];
+
+                    secureStorage.write(
+                      key: ACCESS_TOKEN_KEY,
+                      value: accessToken,
+                    );
+                    secureStorage.write(
+                      key: REFRESH_TOKEN_KEY,
+                      value: refreshToken,
+                    );
 
                     if (!context.mounted) return;
 
