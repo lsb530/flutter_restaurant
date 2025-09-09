@@ -9,15 +9,45 @@ class RootTab extends StatefulWidget {
   State<RootTab> createState() => _RootTabState();
 }
 
-class _RootTabState extends State<RootTab> {
+class _RootTabState extends State<RootTab> with SingleTickerProviderStateMixin{
+  late TabController controller;
+
   int index = 0;
+
+  @override
+  void initState() {
+    super.initState();
+
+    controller = TabController(length: 4, vsync: this);
+    controller.addListener(tabListener);
+  }
+
+  @override
+  void dispose() {
+    controller.removeListener(tabListener);
+
+    super.dispose();
+  }
+
+  void tabListener() {
+    setState(() {
+      index = controller.index;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     return DefaultLayout(
       title: '보기 딜리버리',
-      child: Center(
-        child: Text('Root Tab'),
+      child: TabBarView(
+        physics: NeverScrollableScrollPhysics(),
+        controller: controller,
+        children: [
+          Center(child: Container(child: Text('홈'))),
+          Center(child: Container(child: Text('음식'))),
+          Center(child: Container(child: Text('주문'))),
+          Center(child: Container(child: Text('프로필'))),
+        ],
       ),
       bottomNavigationBar: BottomNavigationBar(
         selectedItemColor: PRIMARY_COLOR,
@@ -26,9 +56,7 @@ class _RootTabState extends State<RootTab> {
         unselectedFontSize: 10,
         type: BottomNavigationBarType.fixed, // shifting: 선택한 아이콘이 조금 더 커짐
         onTap: (value) {
-          setState(() {
-            index = value;
-          });
+          controller.animateTo(value);
         },
         currentIndex: index,
         items: [
