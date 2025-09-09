@@ -7,6 +7,7 @@ import 'package:flutter_restaurant/common/component/custom_text_form_field.dart'
 import 'package:flutter_restaurant/common/const/colors.dart';
 import 'package:flutter_restaurant/common/layout/default_layout.dart';
 import 'package:flutter_restaurant/common/util/json_viewer.dart';
+import 'package:flutter_restaurant/common/view/root_tab.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -74,13 +75,19 @@ class _LoginScreenState extends State<LoginScreen> {
                     final resp = await dio.post(
                       'http://$hostPort/auth/login',
                       options: Options(
-                        headers: {
-                          'authorization': 'Basic $token'
-                        },
-                      )
+                        headers: {'authorization': 'Basic $token'},
+                      ),
                     );
 
-                    JsonViewer.printPretty(resp.data);
+                    // JsonViewer.printPretty(resp.data);
+
+                    if (!context.mounted) return;
+
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (_) => RootTab(),
+                      ),
+                    );
                   },
                   style: ElevatedButton.styleFrom(
                     // primary  // deprecated
@@ -91,15 +98,14 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
                 TextButton(
                   onPressed: () async {
-                    final refreshToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InRlc3RAY29kZWZhY3RvcnkuYWkiLCJzdWIiOiJmNTViMzJkMi00ZDY4LTRjMWUtYTNjYS1kYTlkN2QwZDkyZTUiLCJ0eXBlIjoicmVmcmVzaCIsImlhdCI6MTc1NzM4MDI4MSwiZXhwIjoxNzU3NDY2NjgxfQ.MOue8F5URhMQzZbUzuShFWUQYG5oNc5CbvcBNlV1ZUE';
+                    final refreshToken =
+                        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InRlc3RAY29kZWZhY3RvcnkuYWkiLCJzdWIiOiJmNTViMzJkMi00ZDY4LTRjMWUtYTNjYS1kYTlkN2QwZDkyZTUiLCJ0eXBlIjoicmVmcmVzaCIsImlhdCI6MTc1NzM4MDI4MSwiZXhwIjoxNzU3NDY2NjgxfQ.MOue8F5URhMQzZbUzuShFWUQYG5oNc5CbvcBNlV1ZUE';
 
                     final resp = await dio.post(
-                        'http://$hostPort/auth/token',
-                        options: Options(
-                          headers: {
-                            'authorization': 'Bearer $refreshToken'
-                          },
-                        )
+                      'http://$hostPort/auth/token',
+                      options: Options(
+                        headers: {'authorization': 'Bearer $refreshToken'},
+                      ),
                     );
 
                     JsonViewer.printPretty(resp.data);
