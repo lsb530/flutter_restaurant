@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_restaurant/common/const/colors.dart';
 import 'package:flutter_restaurant/common/const/data.dart';
@@ -40,14 +41,26 @@ class _SplashScreenState extends State<SplashScreen> {
     final accessToken = await secureStorage.read(key: ACCESS_TOKEN_KEY);
     final refreshToken = await secureStorage.read(key: REFRESH_TOKEN_KEY);
 
-    if (accessToken == null || refreshToken == null) {
-      Navigator.of(context).pushAndRemoveUntil(
-        MaterialPageRoute(builder: (_) => LoginScreen()),
-        (route) => false,
+    final dio = Dio();;
+
+    try {
+      final resp = await dio.post(
+        'http://$hostPort/auth/token',
+        options: Options(
+          headers: {'authorization': 'Bearer $refreshToken'},
+        ),
       );
-    } else {
+      print('-------- 요청 성공 --------');
+
       Navigator.of(context).pushAndRemoveUntil(
         MaterialPageRoute(builder: (_) => RootTab()),
+            (route) => false,
+      );
+    } catch(e) {
+      print('-------- 에러 발생 --------');
+      print(e);
+      Navigator.of(context).pushAndRemoveUntil(
+        MaterialPageRoute(builder: (_) => LoginScreen()),
             (route) => false,
       );
     }

@@ -26,12 +26,6 @@ class _LoginScreenState extends State<LoginScreen> {
   Widget build(BuildContext context) {
     final dio = Dio();
 
-    // localhost
-    final emulatorIp = '10.0.2.2:3000'; // android
-    final simulatorIp = '127.0.0.1:3000'; // ios
-
-    final hostPort = Platform.isIOS ? simulatorIp : emulatorIp;
-
     return DefaultLayout(
       child: SingleChildScrollView(
         keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
@@ -112,17 +106,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
                 TextButton(
                   onPressed: () async {
-                    final refreshToken =
-                        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InRlc3RAY29kZWZhY3RvcnkuYWkiLCJzdWIiOiJmNTViMzJkMi00ZDY4LTRjMWUtYTNjYS1kYTlkN2QwZDkyZTUiLCJ0eXBlIjoicmVmcmVzaCIsImlhdCI6MTc1NzM4MDI4MSwiZXhwIjoxNzU3NDY2NjgxfQ.MOue8F5URhMQzZbUzuShFWUQYG5oNc5CbvcBNlV1ZUE';
 
-                    final resp = await dio.post(
-                      'http://$hostPort/auth/token',
-                      options: Options(
-                        headers: {'authorization': 'Bearer $refreshToken'},
-                      ),
-                    );
-
-                    JsonViewer.printPretty(resp.data);
                   },
                   style: TextButton.styleFrom(
                     foregroundColor: Colors.black,
