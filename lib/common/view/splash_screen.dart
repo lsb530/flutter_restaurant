@@ -41,7 +41,8 @@ class _SplashScreenState extends State<SplashScreen> {
     final accessToken = await secureStorage.read(key: ACCESS_TOKEN_KEY);
     final refreshToken = await secureStorage.read(key: REFRESH_TOKEN_KEY);
 
-    final dio = Dio();;
+    final dio = Dio();
+    ;
 
     try {
       final resp = await dio.post(
@@ -52,16 +53,21 @@ class _SplashScreenState extends State<SplashScreen> {
       );
       print('-------- 요청 성공 --------');
 
+      await secureStorage.write(
+        key: ACCESS_TOKEN_KEY,
+        value: resp.data['accessToken'],
+      );
+
       Navigator.of(context).pushAndRemoveUntil(
         MaterialPageRoute(builder: (_) => RootTab()),
-            (route) => false,
+        (route) => false,
       );
-    } catch(e) {
+    } catch (e) {
       print('-------- 에러 발생 --------');
       print(e);
       Navigator.of(context).pushAndRemoveUntil(
         MaterialPageRoute(builder: (_) => LoginScreen()),
-            (route) => false,
+        (route) => false,
       );
     }
   }
