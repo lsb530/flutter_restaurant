@@ -53,11 +53,11 @@ class RestaurantDetailScreen extends StatelessWidget {
 
           return CustomScrollView(
             slivers: [
-              renderTop(
-                model: item
-              ),
+              renderTop(model: item),
               renderLabel(),
-              renderProducts(),
+              renderProducts(
+                products: item.products,
+              ),
             ],
           );
         },
@@ -67,7 +67,7 @@ class RestaurantDetailScreen extends StatelessWidget {
 
   SliverToBoxAdapter renderTop({
     required RestaurantDetailModel model,
-}) {
+  }) {
     return SliverToBoxAdapter(
       child: RestaurantCard.fromModel(
         model: model,
@@ -93,16 +93,24 @@ class RestaurantDetailScreen extends StatelessWidget {
     );
   }
 
-  SliverPadding renderProducts() {
+  SliverPadding renderProducts({
+    required List<RestaurantProductModel> products,
+  }) {
     return SliverPadding(
       padding: EdgeInsets.symmetric(horizontal: 16.0),
       sliver: SliverList(
         delegate: SliverChildBuilderDelegate(
-          childCount: 10,
-          (context, index) => Padding(
-            padding: EdgeInsets.only(top: 16.0),
-            child: ProductCard(),
-          ),
+          childCount: products.length,
+          (context, index) {
+            final model = products[index];
+
+            return Padding(
+              padding: EdgeInsets.only(top: 16.0),
+              child: ProductCard.fromModel(
+                model: model,
+              ),
+            );
+          },
         ),
       ),
     );
