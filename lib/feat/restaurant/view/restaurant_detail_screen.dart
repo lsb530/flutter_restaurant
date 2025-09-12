@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'dart:math';
 
 import 'package:dio/dio.dart';
@@ -10,41 +11,48 @@ import 'package:flutter_restaurant/feat/restaurant/component/restaurant_card.dar
 import 'package:flutter_restaurant/feat/restaurant/model/restaurant_model.dart';
 
 class RestaurantDetailScreen extends StatelessWidget {
-  const RestaurantDetailScreen({super.key});
+  final String id;
+
+  const RestaurantDetailScreen({
+    super.key,
+    required this.id,
+  });
+
+  Future? getRestaurantDetail() async {
+    final dio = Dio();
+
+    final accessToken = await secureStorage.read(key: ACCESS_TOKEN_KEY);
+
+    final resp = await dio.get(
+      'http://$hostPort/restaurant/$id',
+      options: Options(
+        headers: {
+          HttpHeaders.authorizationHeader: 'Bearer $accessToken'
+        }
+      ),
+    );
+
+    JsonViewer.printPretty(resp.data);
+
+    return resp;
+  }
 
   @override
   Widget build(BuildContext context) {
     return DefaultLayout(
       title: '불타는 떡볶이',
-      child: CustomScrollView(
-        slivers: [
-          renderTop(),
-          renderLabel(),
-          renderProducts(),
-        ],
+      child: FutureBuilder(
+        future: getRestaurantDetail(),
+        builder: (_, snapshot) {
+          return CustomScrollView(
+            slivers: [
+              renderTop(),
+              renderLabel(),
+              renderProducts(),
+            ],
+          );
+        }
       ),
-
-      /*      Column(
-        children: [
-          RestaurantCard(
-            image: Image.asset(
-              'asset/img/food/ddeok_bok_gi.jpg',
-            ),
-            name: '불타는 떡볶이',
-            tags: ['떡볶이', '맛있음', '치즈'],
-            ratingsCount: 100,
-            deliveryTime: 30,
-            deliveryFee: 3000,
-            ratings: 4.76,
-            isDetail: true,
-            detail: '맛있는 떡볶이',
-          ),
-          Padding(
-            padding: EdgeInsets.symmetric(horizontal: 16.0),
-            child: ProductCard(),
-          ),
-        ],
-      ), */
     );
   }
 
