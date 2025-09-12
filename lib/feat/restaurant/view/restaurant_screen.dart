@@ -41,7 +41,9 @@ class RestaurantScreen extends StatelessWidget {
               JsonViewer.printPretty(snapshot.data);
 
               if (!snapshot.hasData) {
-                return Container();
+                return Center(
+                  child: CircularProgressIndicator(),
+                );
               }
 
               return ListView.separated(
