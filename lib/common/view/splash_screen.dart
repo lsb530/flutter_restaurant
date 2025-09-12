@@ -42,7 +42,6 @@ class _SplashScreenState extends State<SplashScreen> {
     final refreshToken = await secureStorage.read(key: REFRESH_TOKEN_KEY);
 
     final dio = Dio();
-    ;
 
     try {
       final resp = await dio.post(
