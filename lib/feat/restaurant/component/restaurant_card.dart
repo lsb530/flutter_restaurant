@@ -99,8 +99,8 @@ class RestaurantCard extends StatelessWidget {
                   ),
                   renderDot(),
                   _IconText(
-                    icon: Icons.monetization_on,
-                    label: deliveryFee == 0 ? '무료' : '$deliveryFee원',
+                    icon: Icons.delivery_dining,
+                    label: deliveryFee == 0 ? '무료' : '$deliveryFee',
                   ),
                 ],
               ),

@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_restaurant/common/const/data.dart';
 import 'package:flutter_restaurant/common/layout/default_layout.dart';
 import 'package:flutter_restaurant/common/util/json_viewer.dart';
+import 'package:flutter_restaurant/feat/product/component/product_card.dart';
 import 'package:flutter_restaurant/feat/restaurant/component/restaurant_card.dart';
 import 'package:flutter_restaurant/feat/restaurant/model/restaurant_model.dart';
 
@@ -29,6 +30,10 @@ class RestaurantDetailScreen extends StatelessWidget {
             ratings: 4.76,
             isDetail: true,
             detail: '맛있는 떡볶이',
+          ),
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: 16.0),
+            child: ProductCard(),
           ),
         ],
       ),
