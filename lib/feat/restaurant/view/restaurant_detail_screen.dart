@@ -1,5 +1,4 @@
 import 'dart:io';
-import 'dart:math';
 
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
@@ -8,7 +7,7 @@ import 'package:flutter_restaurant/common/layout/default_layout.dart';
 import 'package:flutter_restaurant/common/util/json_viewer.dart';
 import 'package:flutter_restaurant/feat/product/component/product_card.dart';
 import 'package:flutter_restaurant/feat/restaurant/component/restaurant_card.dart';
-import 'package:flutter_restaurant/feat/restaurant/model/restaurant_model.dart';
+import 'package:flutter_restaurant/feat/restaurant/model/restaurant_detail_model.dart';
 
 class RestaurantDetailScreen extends StatelessWidget {
   final String id;
@@ -18,7 +17,7 @@ class RestaurantDetailScreen extends StatelessWidget {
     required this.id,
   });
 
-  Future? getRestaurantDetail() async {
+  Future<Map<String, dynamic>> getRestaurantDetail() async {
     final dio = Dio();
 
     final accessToken = await secureStorage.read(key: ACCESS_TOKEN_KEY);
@@ -26,24 +25,30 @@ class RestaurantDetailScreen extends StatelessWidget {
     final resp = await dio.get(
       'http://$hostPort/restaurant/$id',
       options: Options(
-        headers: {
-          HttpHeaders.authorizationHeader: 'Bearer $accessToken'
-        }
+        headers: {HttpHeaders.authorizationHeader: 'Bearer $accessToken'},
       ),
     );
 
-    JsonViewer.printPretty(resp.data);
+    // JsonViewer.printPretty(resp.data);
 
-    return resp;
+    return resp.data;
   }
 
   @override
   Widget build(BuildContext context) {
     return DefaultLayout(
       title: '불타는 떡볶이',
-      child: FutureBuilder(
+      child: FutureBuilder<Map<String, dynamic>>(
         future: getRestaurantDetail(),
-        builder: (_, snapshot) {
+        builder: (_, AsyncSnapshot<Map<String, dynamic>> snapshot) {
+          if (!snapshot.hasData) {
+            return Container();
+          }
+
+          final item = RestaurantDetailModel.fromJson(
+            json: snapshot.data!,
+          );
+
           return CustomScrollView(
             slivers: [
               renderTop(),
@@ -51,7 +56,7 @@ class RestaurantDetailScreen extends StatelessWidget {
               renderProducts(),
             ],
           );
-        }
+        },
       ),
     );
   }
