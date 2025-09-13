@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_restaurant/common/const/data.dart';
+import 'package:flutter_restaurant/common/dio/dio.dart';
 import 'package:flutter_restaurant/common/layout/default_layout.dart';
 import 'package:flutter_restaurant/common/util/json_viewer.dart';
 import 'package:flutter_restaurant/feat/product/component/product_card.dart';
@@ -20,10 +21,15 @@ class RestaurantDetailScreen extends StatelessWidget {
 
   Future<RestaurantDetailModel> getRestaurantDetail() async {
     final dio = Dio();
+
+    dio.interceptors.add(
+      CustomInterceptor(secureStorage: secureStorage),
+    );
+
     final repository = RestaurantRepository(dio, baseUrl: 'http://$hostPort/restaurant');
 
     final accessToken = await secureStorage.read(key: ACCESS_TOKEN_KEY);
-    return repository.getRestaurantDetail(id: id, token: 'Bearer $accessToken');
+    return repository.getRestaurantDetail(id: id);
   }
 
   @override
