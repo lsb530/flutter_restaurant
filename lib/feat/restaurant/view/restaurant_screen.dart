@@ -1,5 +1,3 @@
-import 'dart:math';
-
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_restaurant/common/const/data.dart';
@@ -56,6 +54,7 @@ class RestaurantScreen extends StatelessWidget {
                         MaterialPageRoute(
                           builder: (_) => RestaurantDetailScreen(
                             id: pItem.id,
+                            title: pItem.name,
                           ),
                         ),
                       );
