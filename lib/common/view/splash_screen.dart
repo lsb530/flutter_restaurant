@@ -5,17 +5,19 @@ import 'package:flutter/material.dart';
 import 'package:flutter_restaurant/common/const/colors.dart';
 import 'package:flutter_restaurant/common/const/data.dart';
 import 'package:flutter_restaurant/common/layout/default_layout.dart';
+import 'package:flutter_restaurant/common/secure_storage/secure_storage.dart';
 import 'package:flutter_restaurant/common/view/root_tab.dart';
 import 'package:flutter_restaurant/feat/user/view/login_screen.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class SplashScreen extends StatefulWidget {
+class SplashScreen extends ConsumerStatefulWidget {
   const SplashScreen({super.key});
 
   @override
-  State<SplashScreen> createState() => _SplashScreenState();
+  ConsumerState<ConsumerStatefulWidget> createState() => _SplashScreenState();
 }
 
-class _SplashScreenState extends State<SplashScreen> {
+class _SplashScreenState extends ConsumerState<SplashScreen> {
   @override
   void initState() {
     super.initState();
@@ -34,10 +36,14 @@ class _SplashScreenState extends State<SplashScreen> {
   }
 
   Future<void> deleteToken() async {
+    final secureStorage = ref.read(secureStorageProvider);
+
     await secureStorage.deleteAll();
   }
 
   Future<void> checkToken() async {
+    final secureStorage = ref.read(secureStorageProvider);
+
     final accessToken = await secureStorage.read(key: ACCESS_TOKEN_KEY);
     final refreshToken = await secureStorage.read(key: REFRESH_TOKEN_KEY);
 
