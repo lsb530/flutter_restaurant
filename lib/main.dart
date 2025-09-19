@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_restaurant/common/view/splash_screen.dart';
-import 'package:flutter_restaurant/feat/user/view/login_screen.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 void main() {
   runApp(
-    _App(),
+    ProviderScope(
+      child: _App(),
+    ),
   );
 }
 
