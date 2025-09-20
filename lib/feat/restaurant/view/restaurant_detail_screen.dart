@@ -1,9 +1,5 @@
-import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_restaurant/common/const/data.dart';
-import 'package:flutter_restaurant/common/dio/dio.dart';
 import 'package:flutter_restaurant/common/layout/default_layout.dart';
-import 'package:flutter_restaurant/common/secure_storage/secure_storage.dart';
 import 'package:flutter_restaurant/feat/product/component/product_card.dart';
 import 'package:flutter_restaurant/feat/restaurant/component/restaurant_card.dart';
 import 'package:flutter_restaurant/feat/restaurant/model/restaurant_detail_model.dart';
@@ -20,23 +16,14 @@ class RestaurantDetailScreen extends ConsumerWidget {
     required this.title,
   });
 
-  Future<RestaurantDetailModel> getRestaurantDetail(WidgetRef ref) async {
-    final dio = ref.watch(dioProvider);
-
-    final repository = RestaurantRepository(
-      dio,
-      baseUrl: 'http://$hostPort/restaurant',
-    );
-
-    return repository.getRestaurantDetail(id: id);
-  }
-
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return DefaultLayout(
       title: title,
       child: FutureBuilder<RestaurantDetailModel>(
-        future: getRestaurantDetail(ref),
+        future: ref
+            .watch(restaurantRepositoryProvider)
+            .getRestaurantDetail(id: id),
         builder: (_, AsyncSnapshot<RestaurantDetailModel> snapshot) {
           if (snapshot.hasError) {
             return Center(
