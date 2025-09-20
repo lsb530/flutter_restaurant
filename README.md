@@ -160,8 +160,63 @@ fix
 import 'package:retrofit/retrofit.dart';
 ```
 
-
 ## Tips
 ### File Nesting
 - double shift -> File Nesting
 - Project file Suffix: `.dart` -> Child File Suffix: .. ; `.g.dart; `
+
+
+## Debug
+### build_runner version conflict
+error
+```text
+build_runner                                                                                                                                                                                                                         
+W .dart_tool/build/entrypoint/build.dart:5:8: Error: Error when reading '../../.pub-cache/hosted/pub.dev/build_runner-2.5.4/lib/src/package_graph/apply_builders.dart': No such file or directory                                    
+  import 'package:build_runner/src/package_graph/apply_builders.dart' as _i1;                                                                                                                                                        
+         ^                                                                                                                                                                                                                           
+  .dart_tool/build/entrypoint/build.dart:16:24: Error: 'BuilderApplication' isn't a type.                                                                                                                                            
+  final _builders = <_i1.BuilderApplication>[                                                                                                                                                                                        
+                         ^^^^^^^^^^^^^^^^^^                                                                                                                                                                                          
+  .dart_tool/build/entrypoint/build.dart:20:9: Error: Method not found: 'toDependentsOf'.                                                                                                                                            
+      _i1.toDependentsOf(r'riverpod_generator'),                                                                                                                                                                                     
+          ^^^^^^^^^^^^^^                                                                                                                                                                                                             
+  .dart_tool/build/entrypoint/build.dart:17:7: Error: Method not found: 'apply'.                                                                                                                                                     
+    _i1.apply(                                                                                                                                                                                                                       
+        ^^^^^                                                                                                                                                                                                                        
+  .dart_tool/build/entrypoint/build.dart:27:9: Error: Method not found: 'toDependentsOf'.                                                                                                                                            
+      _i1.toDependentsOf(r'retrofit_generator'),                                                                                                                                                                                     
+          ^^^^^^^^^^^^^^                                                                                                                                                                                                             
+  .dart_tool/build/entrypoint/build.dart:24:7: Error: Method not found: 'apply'.                                                                                                                                                     
+    _i1.apply(                                                                                                                                                                                                                       
+        ^^^^^                                                                                                                                                                                                                        
+  .dart_tool/build/entrypoint/build.dart:34:9: Error: Method not found: 'toDependentsOf'.                                                                                                                                            
+      _i1.toDependentsOf(r'json_serializable'),                                                                                                                                                                                      
+          ^^^^^^^^^^^^^^                                                                                                                                                                                                             
+  .dart_tool/build/entrypoint/build.dart:31:7: Error: Method not found: 'apply'.                                                                                                                                                     
+    _i1.apply(                                                                                                                                                                                                                       
+        ^^^^^                                                                                                                                                                                                                        
+  .dart_tool/build/entrypoint/build.dart:41:9: Error: Method not found: 'toNoneByDefault'.                                                                                                                                           
+      _i1.toNoneByDefault(),                                                                                                                                                                                                         
+          ^^^^^^^^^^^^^^^                                                                                                                                                                                                            
+  .dart_tool/build/entrypoint/build.dart:38:7: Error: Method not found: 'apply'.                                                                                                                                                     
+    _i1.apply(                                                                                                                                                                                                                       
+        ^^^^^                                                                                                                                                                                                                        
+  .dart_tool/build/entrypoint/build.dart:45:7: Error: Method not found: 'applyPostProcess'.                                                                                                                                          
+    _i1.applyPostProcess(                                                                                                                                                                                                            
+        ^^^^^^^^^^^^^^^^                                                                                                                                                                                                             
+                                                                                                                                                                                                                                     
+Compiling the build script.                                                                                                                                                                                                          
+Log overflowed the console, switching to line-by-line logging.
+E Failed to compile build script. Check builder definitions and generated script .dart_tool/build/entrypoint/build.dart.
+Failed to update packages.
+```
+
+fix
+```yaml
+build_runner: ^2.5.4 # 기존 형태 build_runner:
+```
+```shell
+flutter clean
+flutter pub get
+flutter pub run build_runner build --delete-conflicting-outputs
+```
