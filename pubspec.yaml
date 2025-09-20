@@ -26,7 +26,7 @@ dev_dependencies:
   json_serializable: ^6.9.0
   retrofit_generator: ^9.1.5
   riverpod_generator: ^2.6.5
-  build_runner:
+  build_runner: ^2.5.4
 
 flutter:
   uses-material-design: true
