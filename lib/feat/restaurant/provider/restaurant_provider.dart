@@ -24,7 +24,7 @@ class RestaurantStateNotifier extends StateNotifier<CursorPaginationBase> {
     // 기존 데이터 유지 후, 추가로 데이터 요청
     bool fetchMore = false,
     // 강제로 전체 데이터 삭제 후, 다시 로딩(true: CursorPaginationLoading())
-    bool fetchRefetch = false,
+    bool forceRefetch = false,
   }) async {
     // 5가지 State
     /// 1) CursorPagination - 정상적으로 데이터가 존재
