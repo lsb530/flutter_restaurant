@@ -5,10 +5,9 @@ import 'package:flutter_restaurant/feat/restaurant/component/restaurant_card.dar
 import 'package:flutter_restaurant/feat/restaurant/model/restaurant_detail_model.dart';
 import 'package:flutter_restaurant/feat/restaurant/model/restaurant_model.dart';
 import 'package:flutter_restaurant/feat/restaurant/provider/restaurant_provider.dart';
-import 'package:flutter_restaurant/feat/restaurant/repository/restaurant_repository.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class RestaurantDetailScreen extends ConsumerWidget {
+class RestaurantDetailScreen extends ConsumerStatefulWidget {
   final String id;
   final String title;
 
@@ -19,8 +18,22 @@ class RestaurantDetailScreen extends ConsumerWidget {
   });
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final state = ref.watch(restaurantDetailProvider(id));
+  ConsumerState<RestaurantDetailScreen> createState() =>
+      _RestaurantDetailScreenState();
+}
+
+class _RestaurantDetailScreenState
+    extends ConsumerState<RestaurantDetailScreen> {
+  @override
+  void initState() {
+    super.initState();
+
+    ref.read(restaurantProvider.notifier).getDetail(id: widget.id);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final state = ref.watch(restaurantDetailProvider(widget.id));
 
     if (state == null) {
       return DefaultLayout(
@@ -31,16 +44,17 @@ class RestaurantDetailScreen extends ConsumerWidget {
     }
 
     return DefaultLayout(
-      title: title,
+      title: widget.title,
       child: CustomScrollView(
         slivers: [
           renderTop(
             model: state,
           ),
-          // renderLabel(),
-          // renderProducts(
-          //   products: snapshot.data!.products,
-          // ),
+          if (state is RestaurantDetailModel) renderLabel(),
+          if (state is RestaurantDetailModel)
+            renderProducts(
+              products: state.products,
+            ),
         ],
       ),
     );
