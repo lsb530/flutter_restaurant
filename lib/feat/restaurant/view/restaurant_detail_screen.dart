@@ -6,6 +6,7 @@ import 'package:flutter_restaurant/feat/restaurant/model/restaurant_detail_model
 import 'package:flutter_restaurant/feat/restaurant/model/restaurant_model.dart';
 import 'package:flutter_restaurant/feat/restaurant/provider/restaurant_provider.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:skeletonizer/skeletonizer.dart';
 
 class RestaurantDetailScreen extends ConsumerStatefulWidget {
   final String id;
@@ -50,12 +51,48 @@ class _RestaurantDetailScreenState
           renderTop(
             model: state,
           ),
+          if (state is! RestaurantDetailModel) renderLoading(),
           if (state is RestaurantDetailModel) renderLabel(),
           if (state is RestaurantDetailModel)
             renderProducts(
               products: state.products,
             ),
         ],
+      ),
+    );
+  }
+
+  SliverPadding renderLoading() {
+    return SliverPadding(
+      padding: EdgeInsets.symmetric(
+        vertical: 16.0,
+        horizontal: 16.0,
+      ),
+      sliver: SliverList(
+        delegate: SliverChildListDelegate(
+          List.generate(
+            3,
+            (index) => Padding(
+              padding: const EdgeInsets.only(bottom: 32.0),
+              child: Skeletonizer(
+                enabled: true,
+                child: Column(
+                  children: List.generate(
+                    5,
+                    (lineIndex) => Padding(
+                      padding: const EdgeInsets.only(bottom: 8.0),
+                      child: Container(
+                        width: double.infinity,
+                        height: 16.0,
+                        color: Colors.grey[300],
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ),
       ),
     );
   }
