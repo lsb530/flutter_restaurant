@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_restaurant/common/const/colors.dart';
+import 'package:collection/collection.dart';
 
 class RatingCard extends StatelessWidget {
   // NetworkImage, AssetImage
   final ImageProvider avatarImage; // CircleAvatar
   final int rating;
   final String email;
-  final List<Image> images;
   final String content;
+  final List<Image> images;
 
   const RatingCard({
     super.key,
@@ -31,7 +32,13 @@ class RatingCard extends StatelessWidget {
         _Body(
           content: content,
         ),
-        _Images(),
+        if (images.isNotEmpty)
+          SizedBox(
+            height: 100,
+            child: _Images(
+              images: images,
+            ),
+          ),
       ],
     );
   }
@@ -108,10 +115,30 @@ class _Body extends StatelessWidget {
 }
 
 class _Images extends StatelessWidget {
-  const _Images({super.key});
+  final List<Image> images;
+
+  const _Images({
+    super.key,
+    required this.images,
+  });
 
   @override
   Widget build(BuildContext context) {
-    return Container();
+    return ListView(
+      scrollDirection: Axis.horizontal,
+      children: images
+          .mapIndexed(
+            (index, element) => Padding(
+              padding: EdgeInsets.only(
+                right: index == images.length - 1 ? 0 : 16.0,
+              ),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(8.0),
+                child: element,
+              ),
+            ),
+          )
+          .toList(),
+    );
   }
 }
