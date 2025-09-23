@@ -27,7 +27,10 @@ class RatingCard extends StatelessWidget {
           rating: rating,
           email: email,
         ),
-        _Body(),
+        const SizedBox(height: 8.0),
+        _Body(
+          content: content,
+        ),
         _Images(),
       ],
     );
@@ -54,7 +57,7 @@ class _Header extends StatelessWidget {
           radius: 12.0,
           backgroundImage: avatarImage,
         ),
-        const SizedBox(width: 8.0,),
+        const SizedBox(width: 8.0),
         Expanded(
           child: Text(
             email,
@@ -69,7 +72,7 @@ class _Header extends StatelessWidget {
         ...List.generate(
           5,
           (index) => Icon(
-            index < rating ? Icons.star: Icons.star_border_outlined,
+            index < rating ? Icons.star : Icons.star_border_outlined,
             color: PRIMARY_COLOR,
           ),
         ),
@@ -79,11 +82,28 @@ class _Header extends StatelessWidget {
 }
 
 class _Body extends StatelessWidget {
-  const _Body({super.key});
+  final String content;
+
+  const _Body({
+    super.key,
+    required this.content,
+  });
 
   @override
   Widget build(BuildContext context) {
-    return Container();
+    return Row(
+      children: [
+        Flexible(
+          child: Text(
+            content,
+            style: TextStyle(
+              fontSize: 14.0,
+              color: BODY_TEXT_COLOR,
+            ),
+          ),
+        ),
+      ],
+    );
   }
 }
 
