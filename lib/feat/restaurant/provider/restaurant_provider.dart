@@ -1,9 +1,9 @@
 import 'package:flutter_restaurant/common/model/cursor_pagination_model.dart';
-import 'package:flutter_restaurant/common/model/pagination_params.dart';
 import 'package:flutter_restaurant/common/provider/pagination_provider.dart';
 import 'package:flutter_restaurant/feat/restaurant/model/restaurant_model.dart';
 import 'package:flutter_restaurant/feat/restaurant/repository/restaurant_repository.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:collection/collection.dart';
 
 final restaurantDetailProvider = Provider.family<RestaurantModel?, String>((
   ref,
@@ -15,7 +15,8 @@ final restaurantDetailProvider = Provider.family<RestaurantModel?, String>((
     return null;
   }
 
-  return state.data.firstWhere((element) => element.id == id);
+  // nullable
+  return state.data.firstWhereOrNull((element) => element.id == id);
 });
 
 final restaurantProvider =
@@ -28,7 +29,6 @@ final restaurantProvider =
 
 class RestaurantStateNotifier
     extends PaginationProvider<RestaurantModel, RestaurantRepository> {
-
   RestaurantStateNotifier({
     required super.repository,
   });
@@ -51,10 +51,23 @@ class RestaurantStateNotifier
     final resp = await repository.getRestaurantDetail(id: id);
 
     // [RestaurantModel(1), RestaurantDetailModel(2), RestaurantModel(3)]
-    state = pState.copyWith(
-      data: pState.data
-          .map<RestaurantModel>((e) => e.id == id ? resp : e)
-          .toList(),
-    );
+    // 요청 id: 10
+    // 데이터가 없을 때는 캐시의 끝에다가 데이터를 추가
+    // [RestaurantModel(1), RestaurantDetailModel(2), RestaurantModel(3), RestaurantModel(10)]
+    if (pState.data.where((e) => e.id == id).isEmpty) {
+      state = pState.copyWith(
+        data: <RestaurantModel>[
+          ...pState.data,
+          resp,
+        ],
+      );
+    } else {
+      // [RestaurantModel(1), RestaurantDetailModel(2), RestaurantModel(3)]
+      state = pState.copyWith(
+        data: pState.data
+            .map<RestaurantModel>((e) => e.id == id ? resp : e)
+            .toList(),
+      );
+    }
   }
 }
