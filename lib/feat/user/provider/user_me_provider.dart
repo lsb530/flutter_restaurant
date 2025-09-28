@@ -1,9 +1,24 @@
 import 'package:flutter_restaurant/common/const/data.dart';
+import 'package:flutter_restaurant/common/secure_storage/secure_storage.dart';
 import 'package:flutter_restaurant/feat/user/model/user_model.dart';
 import 'package:flutter_restaurant/feat/user/repository/auth_repository.dart';
 import 'package:flutter_restaurant/feat/user/repository/user_me_repository.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+
+final userMeProvider = StateNotifierProvider<UserMeStateNotifier, UserModelBase?>(
+  (ref) {
+    final authRepository = ref.watch(authRepositoryProvider);
+    final userMeRepository = ref.watch(userMeRepositoryProvider);
+    final secureStorage = ref.watch(secureStorageProvider);
+
+    return UserMeStateNotifier(
+      authRepository: authRepository,
+      repository: userMeRepository,
+      secureStorage: secureStorage,
+    );
+  },
+);
 
 class UserMeStateNotifier extends StateNotifier<UserModelBase?> {
   final AuthRepository authRepository;

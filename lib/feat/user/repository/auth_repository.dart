@@ -1,7 +1,18 @@
 import 'package:dio/dio.dart';
+import 'package:flutter_restaurant/common/const/data.dart';
+import 'package:flutter_restaurant/common/dio/dio.dart';
 import 'package:flutter_restaurant/common/model/login_response.dart';
 import 'package:flutter_restaurant/common/model/token_response.dart';
 import 'package:flutter_restaurant/common/util/data_utils.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+final authRepositoryProvider = Provider<AuthRepository>(
+  (ref) {
+    final dio = ref.watch(dioProvider);
+
+    return AuthRepository(baseUrl: 'http://$hostPort/auth', dio: dio);
+  },
+);
 
 class AuthRepository {
   final String baseUrl;
