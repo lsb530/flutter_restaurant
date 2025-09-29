@@ -5,13 +5,15 @@ import 'package:flutter_restaurant/feat/product/view/product_screen.dart';
 import 'package:flutter_restaurant/feat/restaurant/view/restaurant_screen.dart';
 
 class RootTab extends StatefulWidget {
+  static String get routeName => 'home';
+
   const RootTab({super.key});
 
   @override
   State<RootTab> createState() => _RootTabState();
 }
 
-class _RootTabState extends State<RootTab> with SingleTickerProviderStateMixin{
+class _RootTabState extends State<RootTab> with SingleTickerProviderStateMixin {
   late TabController controller;
 
   int index = 0;
@@ -56,7 +58,8 @@ class _RootTabState extends State<RootTab> with SingleTickerProviderStateMixin{
         unselectedItemColor: BODY_TEXT_COLOR,
         selectedFontSize: 10,
         unselectedFontSize: 10,
-        type: BottomNavigationBarType.fixed, // shifting: 선택한 아이콘이 조금 더 커짐
+        type: BottomNavigationBarType.fixed,
+        // shifting: 선택한 아이콘이 조금 더 커짐
         onTap: (value) {
           controller.animateTo(value);
         },
