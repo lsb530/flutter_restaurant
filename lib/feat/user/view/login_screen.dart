@@ -1,13 +1,9 @@
-import 'dart:convert';
-
-import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_restaurant/common/component/custom_text_form_field.dart';
 import 'package:flutter_restaurant/common/const/colors.dart';
-import 'package:flutter_restaurant/common/const/data.dart';
 import 'package:flutter_restaurant/common/layout/default_layout.dart';
-import 'package:flutter_restaurant/common/secure_storage/secure_storage.dart';
-import 'package:flutter_restaurant/common/view/root_tab.dart';
+import 'package:flutter_restaurant/feat/user/model/user_model.dart';
+import 'package:flutter_restaurant/feat/user/provider/user_me_provider.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class LoginScreen extends ConsumerStatefulWidget {
@@ -25,7 +21,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final dio = Dio();
+    final state = ref.watch(userMeProvider);
 
     return DefaultLayout(
       child: SingleChildScrollView(
@@ -61,45 +57,16 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                 ),
                 const SizedBox(height: 16.0),
                 ElevatedButton(
-                  onPressed: () async {
-                    // ID:PW
-                    final testIdPw = 'test@codefactory.ai:testtest';
-                    final inputIdPw = '$username:$password';
-
-                    Codec<String, String> stringToBase64 = utf8.fuse(base64);
-                    String token = stringToBase64.encode(inputIdPw);
-
-                    final resp = await dio.post(
-                      'http://$hostPort/auth/login',
-                      options: Options(
-                        headers: {'authorization': 'Basic $token'},
-                      ),
-                    );
-
-                    // JsonViewer.printPretty(resp.data);
-
-                    final refreshToken = resp.data['refreshToken'];
-                    final accessToken = resp.data['accessToken'];
-
-                    final secureStorage = ref.read(secureStorageProvider);
-
-                    secureStorage.write(
-                      key: ACCESS_TOKEN_KEY,
-                      value: accessToken,
-                    );
-                    secureStorage.write(
-                      key: REFRESH_TOKEN_KEY,
-                      value: refreshToken,
-                    );
-
-                    if (!context.mounted) return;
-
-                    Navigator.of(context).push(
-                      MaterialPageRoute(
-                        builder: (_) => RootTab(),
-                      ),
-                    );
-                  },
+                  onPressed: state is UserModelLoading
+                      ? null
+                      : () async {
+                          ref
+                              .read(userMeProvider.notifier)
+                              .login(
+                                username: username,
+                                password: password,
+                              );
+                        },
                   style: ElevatedButton.styleFrom(
                     // primary  // deprecated
                     backgroundColor: PRIMARY_COLOR,
@@ -108,9 +75,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                   child: Text('로그인'),
                 ),
                 TextButton(
-                  onPressed: () async {
-
-                  },
+                  onPressed: () async {},
                   style: TextButton.styleFrom(
                     foregroundColor: Colors.black,
                   ),
