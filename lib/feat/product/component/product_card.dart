@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_restaurant/common/const/colors.dart';
+import 'package:flutter_restaurant/common/util/data_utils.dart';
 import 'package:flutter_restaurant/feat/product/model/product_model.dart';
 import 'package:flutter_restaurant/feat/restaurant/model/restaurant_detail_model.dart';
 import 'package:flutter_restaurant/feat/user/provider/basket_provider.dart';
@@ -103,7 +104,7 @@ class ProductCard extends ConsumerWidget {
                       ),
                     ),
                     Text(
-                      '₩$price',
+                      DataUtils.formatCurrency(price),
                       textAlign: TextAlign.right,
                       style: TextStyle(
                         color: PRIMARY_COLOR,
@@ -130,11 +131,14 @@ class ProductCard extends ConsumerWidget {
       final totalPrice = foundProduct.count * foundProduct.product.price;
       final basketCount = foundProduct.count;
 
-      return _Footer(
-        totalPrice: totalPrice.toString(),
-        count: basketCount,
-        onSubtract: onSubtract!,
-        onAdd: onAdd!,
+      return Padding(
+        padding: const EdgeInsets.only(top: 8.0),
+        child: _Footer(
+          totalPrice: totalPrice.toString(),
+          count: basketCount,
+          onSubtract: onSubtract!,
+          onAdd: onAdd!,
+        ),
       );
     }
 
@@ -162,7 +166,7 @@ class _Footer extends StatelessWidget {
       children: [
         Expanded(
           child: Text(
-            '총액 ₩$totalPrice',
+            '총액 ${DataUtils.formatCurrency(int.parse(totalPrice))}',
             style: TextStyle(
               color: PRIMARY_COLOR,
               fontWeight: FontWeight.w500,
@@ -175,6 +179,7 @@ class _Footer extends StatelessWidget {
               icon: Icons.remove,
               onTap: onSubtract,
             ),
+            const SizedBox(width: 8.0),
             Text(
               count.toString(),
               style: TextStyle(
@@ -182,6 +187,7 @@ class _Footer extends StatelessWidget {
                 fontWeight: FontWeight.w500,
               ),
             ),
+            const SizedBox(width: 8.0),
             renderButton(
               icon: Icons.add,
               onTap: onAdd,
