@@ -1,6 +1,9 @@
 import 'package:dio/dio.dart';
 import 'package:flutter_restaurant/common/const/data.dart';
 import 'package:flutter_restaurant/common/secure_storage/secure_storage.dart';
+import 'package:flutter_restaurant/feat/user/provider/auth_provider.dart';
+import 'package:flutter_restaurant/feat/user/provider/user_me_provider.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
@@ -10,7 +13,10 @@ final dioProvider = Provider<Dio>((ref) {
   final secureStorage = ref.watch(secureStorageProvider);
 
   dio.interceptors.add(
-    CustomInterceptor(secureStorage: secureStorage),
+    CustomInterceptor(
+      secureStorage: secureStorage,
+      ref: ref,
+    ),
   );
 
   return dio;
@@ -18,9 +24,11 @@ final dioProvider = Provider<Dio>((ref) {
 
 class CustomInterceptor extends Interceptor {
   final FlutterSecureStorage secureStorage;
+  final Ref ref;
 
   CustomInterceptor({
     required this.secureStorage,
+    required this.ref,
   });
 
   // 1) 요청 보낼 때
@@ -57,7 +65,9 @@ class CustomInterceptor extends Interceptor {
   // 2) 응답을 받을 때
   @override
   void onResponse(Response response, ResponseInterceptorHandler handler) {
-    print('[RES] [${response.requestOptions.method}] ${response.requestOptions.uri}');
+    print(
+      '[RES] [${response.requestOptions.method}] ${response.requestOptions.uri}',
+    );
 
     return super.onResponse(response, handler);
   }
@@ -105,6 +115,8 @@ class CustomInterceptor extends Interceptor {
 
         return handler.resolve(response);
       } on DioException catch (e) {
+        ref.read(authProvider.notifier).logout();
+
         return handler.reject(e);
       }
     }
