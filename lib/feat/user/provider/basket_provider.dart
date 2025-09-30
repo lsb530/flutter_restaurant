@@ -8,12 +8,33 @@ import 'package:collection/collection.dart';
 final basketProvider =
     StateNotifierProvider<BasketProvider, List<BasketItemModel>>(
       (ref) {
-        return BasketProvider();
+        final repository = ref.watch(userMeRepositoryProvider);
+
+        return BasketProvider(
+          repository: repository,
+        );
       },
     );
 
 class BasketProvider extends StateNotifier<List<BasketItemModel>> {
-  BasketProvider() : super([]);
+  final UserMeRepository repository;
+
+  BasketProvider({
+    required this.repository,
+  }) : super([]);
+
+  Future<void> patchBasket() async {
+    await repository.patchBasket(
+      body: PatchBasketBody(
+        basket: state.map(
+          (e) => PatchBasketBodyBasket(
+            productId: e.product.id,
+            count: e.count,
+          ),
+        ).toList(),
+      ),
+    );
+  }
 
   Future<void> addToBasket({
     required ProductModel product,
@@ -49,7 +70,7 @@ class BasketProvider extends StateNotifier<List<BasketItemModel>> {
     // Optimistic Response (긍정적 응답)
     // 응답이 성공할 것이라고 가정하고, 상태를 먼저 업데이트함
     // 이유: 에러가 크리티컬하지 않고, 유저가 앱이 빠르다는 인식이 더 중요하다고 판단했기 때문
-    await Future.delayed(Duration(milliseconds: 500)); // 임시
+    await patchBasket();
   }
 
   Future<void> removeFromBasket({
@@ -84,5 +105,7 @@ class BasketProvider extends StateNotifier<List<BasketItemModel>> {
           )
           .toList();
     }
+
+    await patchBasket();
   }
 }
