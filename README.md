@@ -220,3 +220,103 @@ flutter clean
 flutter pub get
 flutter pub run build_runner build --delete-conflicting-outputs
 ```
+
+### go route with context variable
+error
+```text
+======== Exception caught by gesture ===============================================================
+The following NoSuchMethodError was thrown while handling a gesture:
+Class 'SliverMultiBoxAdaptorElement' has no instance method 'go'.
+Receiver: Instance of 'SliverMultiBoxAdaptorElement'
+Tried calling: go("/restaurant/5ac83bfb-f2b5-55f4-be3c-564be3f01a5b")
+
+When the exception was thrown, this was the stack: 
+#0      Object.noSuchMethod (dart:core-patch/object_patch.dart:38:5)
+#1      RestaurantScreen.build.<anonymous closure>.<anonymous closure> (package:flutter_restaurant/feat/restaurant/view/restaurant_screen.dart:17:21)
+#2      GestureRecognizer.invokeCallback (package:flutter/src/gestures/recognizer.dart:345:24)
+#3      TapGestureRecognizer.handleTapUp (package:flutter/src/gestures/tap.dart:758:11)
+#4      BaseTapGestureRecognizer._checkUp (package:flutter/src/gestures/tap.dart:383:5)
+#5      BaseTapGestureRecognizer.acceptGesture (package:flutter/src/gestures/tap.dart:353:7)
+#6      GestureArenaManager.sweep (package:flutter/src/gestures/arena.dart:173:27)
+#7      GestureBinding.handleEvent (package:flutter/src/gestures/binding.dart:532:20)
+#8      GestureBinding.dispatchEvent (package:flutter/src/gestures/binding.dart:498:22)
+#9      RendererBinding.dispatchEvent (package:flutter/src/rendering/binding.dart:473:11)
+#10     GestureBinding._handlePointerEventImmediately (package:flutter/src/gestures/binding.dart:437:7)
+#11     GestureBinding.handlePointerEvent (package:flutter/src/gestures/binding.dart:394:5)
+#12     GestureBinding._flushPointerEventQueue (package:flutter/src/gestures/binding.dart:341:7)
+#13     GestureBinding._handlePointerDataPacket (package:flutter/src/gestures/binding.dart:308:9)
+#14     _invoke1 (dart:ui/hooks.dart:346:13)
+#15     PlatformDispatcher._dispatchPointerDataPacket (dart:ui/platform_dispatcher.dart:467:7)
+#16     _dispatchPointerDataPacket (dart:ui/hooks.dart:281:31)
+Handler: "onTap"
+Recognizer: TapGestureRecognizer#b0880
+  debugOwner: GestureDetector
+  state: ready
+  won arena
+  finalPosition: Offset(213.3, 268.3)
+  finalLocalPosition: Offset(197.3, 153.3)
+  button: 1
+  sent tap down
+====================================================================================================
+```
+
+code
+```dart
+import 'package:flutter/material.dart';
+import 'package:flutter_restaurant/common/component/pagination_list_view.dart';
+import 'package:flutter_restaurant/feat/restaurant/component/restaurant_card.dart';
+import 'package:flutter_restaurant/feat/restaurant/provider/restaurant_provider.dart';
+import 'package:go_router/go_router.dart';
+
+class RestaurantScreen extends StatelessWidget {
+  const RestaurantScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return PaginationListView(
+      provider: restaurantProvider,
+      itemBuilder: <RestaurantModel>(context, index, model) {
+        return GestureDetector(
+          onTap: () {
+            context.go('/restaurant/${model.id}');
+          },
+          child: RestaurantCard.fromModel(
+            model: model,
+          ),
+        );
+      },
+    );
+  }
+}
+```
+
+fix
+go_router를 쓸 때는 BuildContext의 context로 넘어가는것이기때문에 itemBuilder의 첫번째 인자를 _로 처리해야됨!
+```dart
+import 'package:flutter/material.dart';
+import 'package:flutter_restaurant/common/component/pagination_list_view.dart';
+import 'package:flutter_restaurant/feat/restaurant/component/restaurant_card.dart';
+import 'package:flutter_restaurant/feat/restaurant/provider/restaurant_provider.dart';
+import 'package:go_router/go_router.dart';
+
+class RestaurantScreen extends StatelessWidget {
+  const RestaurantScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return PaginationListView(
+      provider: restaurantProvider,
+      itemBuilder: <RestaurantModel>(_, index, model) { /// 여기 수정
+        return GestureDetector(
+          onTap: () {
+            context.go('/restaurant/${model.id}');
+          },
+          child: RestaurantCard.fromModel(
+            model: model,
+          ),
+        );
+      },
+    );
+  }
+}
+```
