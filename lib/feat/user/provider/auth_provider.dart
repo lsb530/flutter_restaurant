@@ -37,6 +37,7 @@ class AuthProvider extends ChangeNotifier {
       routes: [
         GoRoute(
           path: 'restaurant/:rid',
+          name: RestaurantDetailScreen.routeName,
           builder: (_, state) => RestaurantDetailScreen(
             id: state.pathParameters['rid']!,
             title: '',
@@ -74,6 +75,10 @@ class AuthProvider extends ChangeNotifier {
 
     if (user is UserModelError) {
       return !loginIn ? '/login' : null;
+    }
+
+    if (user is UserModelLoading) {
+      return null;
     }
 
     return null;

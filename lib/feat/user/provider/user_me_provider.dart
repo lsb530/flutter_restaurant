@@ -43,9 +43,12 @@ class UserMeStateNotifier extends StateNotifier<UserModelBase?> {
       return;
     }
 
-    final resp = await repository.getMe();
-
-    state = resp;
+    try {
+      final resp = await repository.getMe();
+      state = resp;
+    } catch (e) {
+      state = UserModelError(message: '사용자 정보를 가져오는데 실패했습니다.');
+    }
   }
 
   Future<UserModelBase> login({
