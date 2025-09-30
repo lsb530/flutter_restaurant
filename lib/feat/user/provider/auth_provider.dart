@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_restaurant/common/view/root_tab.dart';
 import 'package:flutter_restaurant/common/view/splash_screen.dart';
+import 'package:flutter_restaurant/feat/restaurant/view/basket_screen.dart';
 import 'package:flutter_restaurant/feat/restaurant/view/restaurant_detail_screen.dart';
 import 'package:flutter_restaurant/feat/user/model/user_model.dart';
 import 'package:flutter_restaurant/feat/user/provider/user_me_provider.dart';
@@ -44,6 +45,11 @@ class AuthProvider extends ChangeNotifier {
           ),
         ),
       ],
+    ),
+    GoRoute(
+      path: '/basket',
+      name: BasketScreen.routeName,
+      builder: (_, __) => BasketScreen(),
     ),
     GoRoute(
       path: '/splash',

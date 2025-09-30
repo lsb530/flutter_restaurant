@@ -172,6 +172,66 @@ import 'package:badges/badges.dart';
 import 'package:flutter/material.dart' hide Badge;
 ```
 
+### Null-Safe Rendering vs Condition Rendering
+- Null-Safe Rendering
+```dart
+@override
+Widget build(BuildContext context, WidgetRef ref) {
+  return Column(
+    children: [
+      // 기존 Widget들,
+      ?renderFooter(ref),
+    ],
+  );
+}
+
+Widget? renderFooter(WidgetRef ref) {
+  if (onSubtract != null && onAdd != null) {
+    final basket = ref.watch(basketProvider);
+    final foundProduct = basket.firstWhere((e) => e.product.id == id);
+
+    final totalPrice = foundProduct.count * foundProduct.product.price;
+    final basketCount = foundProduct.count;
+
+    return _Footer(
+      totalPrice: totalPrice.toString(),
+      count: basketCount,
+      onSubtract: onSubtract!,
+      onAdd: onAdd!,
+    );
+  }
+
+  return null;
+}
+```
+- Condition Rendering
+```dart
+@override
+Widget build(BuildContext context, WidgetRef ref) {
+  return Column(
+    children: [
+      // 기존 Widget들,
+      if (onSubtract != null && onAdd != null) renderFooter(ref),
+    ],
+  );
+}
+
+Widget renderFooter(WidgetRef ref) {
+  final basket = ref.watch(basketProvider);
+  final foundProduct = basket.firstWhere((e) => e.product.id == id);
+
+  final totalPrice = foundProduct.count * foundProduct.product.price;
+  final basketCount = foundProduct.count;
+
+  return _Footer(
+    totalPrice: totalPrice.toString(),
+    count: basketCount,
+    onSubtract: onSubtract!,
+    onAdd: onAdd!,
+  );
+}
+```
+
 
 ## Debug
 ### build_runner version conflict
