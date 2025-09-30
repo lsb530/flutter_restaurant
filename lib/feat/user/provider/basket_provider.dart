@@ -26,12 +26,14 @@ class BasketProvider extends StateNotifier<List<BasketItemModel>> {
   Future<void> patchBasket() async {
     await repository.patchBasket(
       body: PatchBasketBody(
-        basket: state.map(
-          (e) => PatchBasketBodyBasket(
-            productId: e.product.id,
-            count: e.count,
-          ),
-        ).toList(),
+        basket: state
+            .map(
+              (e) => PatchBasketBodyBasket(
+                productId: e.product.id,
+                count: e.count,
+              ),
+            )
+            .toList(),
       ),
     );
   }
@@ -107,5 +109,9 @@ class BasketProvider extends StateNotifier<List<BasketItemModel>> {
     }
 
     await patchBasket();
+  }
+
+  Future<void> clearBasket() async {
+    state = [];
   }
 }

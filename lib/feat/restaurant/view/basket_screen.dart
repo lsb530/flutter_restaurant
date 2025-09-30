@@ -2,9 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_restaurant/common/const/colors.dart';
 import 'package:flutter_restaurant/common/layout/default_layout.dart';
 import 'package:flutter_restaurant/common/util/data_utils.dart';
+import 'package:flutter_restaurant/feat/order/provider/order_provider.dart';
+import 'package:flutter_restaurant/feat/order/view/order_done_screen.dart';
 import 'package:flutter_restaurant/feat/product/component/product_card.dart';
 import 'package:flutter_restaurant/feat/user/provider/basket_provider.dart';
+import 'package:flutter_restaurant/feat/user/provider/user_me_provider.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
 class BasketScreen extends ConsumerWidget {
   static String get routeName => 'basket';
@@ -115,7 +119,24 @@ class BasketScreen extends ConsumerWidget {
                   SizedBox(
                     width: double.infinity,
                     child: ElevatedButton(
-                      onPressed: () {},
+                      onPressed: () async {
+                        final resp = await ref
+                            .read(orderProvider.notifier)
+                            .postOrder();
+                        if (resp) {
+                          await ref.read(basketProvider.notifier).clearBasket();
+                          context.goNamed(OrderDoneScreen.routeName);
+                        } else {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text('결제 실패!'),
+                              duration: const Duration(seconds: 2),
+                              behavior: SnackBarBehavior.fixed,
+                              backgroundColor: Colors.black87,
+                            ),
+                          );
+                        }
+                      },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: PRIMARY_COLOR,
                         foregroundColor: Colors.white,

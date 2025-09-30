@@ -33,7 +33,7 @@ class OrderStateNotifier extends StateNotifier<List<OrderModel>> {
 
       final state = ref.read(basketProvider);
 
-      final resp = await repository.postOrder(
+      await repository.postOrder(
         body: PostOrderBody(
           id: id,
           products: state
