@@ -165,6 +165,13 @@ import 'package:retrofit/retrofit.dart';
 - double shift -> File Nesting
 - Project file Suffix: `.dart` -> Child File Suffix: .. ; `.g.dart; `
 
+### Badges
+- badges: ^3.1.2 를 사용하고 싶다면 material의 Badge 위젯을 hide해야됨
+```dart
+import 'package:badges/badges.dart';
+import 'package:flutter/material.dart' hide Badge;
+```
+
 
 ## Debug
 ### build_runner version conflict
