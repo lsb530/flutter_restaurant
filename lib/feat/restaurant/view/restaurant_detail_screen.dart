@@ -223,6 +223,25 @@ class _RestaurantDetailScreenState
 
             return InkWell(
               onTap: () {
+                final basket = ref.read(basketProvider);
+
+                // 장바구니가 비어있지 않고, 기존 가게와 다른 경우
+                final isDifferentRestaurant =
+                    basket.isNotEmpty &&
+                    basket.first.product.restaurant.id != restaurant.id;
+
+                if (isDifferentRestaurant) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: const Text("여러 가게의 메뉴를 장바구니에 추가할 수 없습니다."),
+                      duration: const Duration(seconds: 2),
+                      behavior: SnackBarBehavior.floating,
+                      backgroundColor: Colors.black87,
+                    ),
+                  );
+                  return;
+                }
+
                 ref
                     .read(basketProvider.notifier)
                     .addToBasket(
