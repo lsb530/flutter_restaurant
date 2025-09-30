@@ -62,6 +62,6 @@ class OrderModel implements IModelWithId {
     required this.createdAt,
   });
 
-  factory OrderModel.fronJson(Map<String, dynamic> json) =>
+  factory OrderModel.fromJson(Map<String, dynamic> json) =>
       _$OrderModelFromJson(json);
 }
