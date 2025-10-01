@@ -387,3 +387,110 @@ class RestaurantScreen extends StatelessWidget {
   }
 }
 ```
+
+### Widget Tree가 그려지기 전 Build 중인 상태에서 상태 변경이 일어나는 경우 발생한 에러
+error
+```text
+flutter: At least listener of the StateNotifier Instance of 'OrderStateNotifier' threw an exception
+when the notifier tried to update its state.
+
+The exceptions thrown are:
+
+Tried to modify a provider while the widget tree was building.
+If you are encountering this error, chances are you tried to modify a provider
+in a widget life-cycle, such as but not limited to:
+- build
+- initState
+- dispose
+- didUpdateWidget
+- didChangeDependencies
+
+Modifying a provider inside those life-cycles is not allowed, as it could
+lead to an inconsistent UI state. For example, two widgets could listen to the
+same provider, but incorrectly receive different states.
+
+
+To fix this problem, you have one of two solutions:
+- (preferred) Move the logic for modifying your provider outside of a widget
+  life-cycle. For example, maybe you could update your provider inside a button's
+  onPressed instead.
+
+- Delay your modification, such as by encapsulating the modification
+  in a `Future(() {...})`.
+  This will perform your update a<…>
+```
+
+code
+```dart
+class OrderScreen extends ConsumerStatefulWidget {
+  const OrderScreen({super.key});
+
+  @override
+  ConsumerState<ConsumerStatefulWidget> createState() => _OrderScreenState();
+}
+
+class _OrderScreenState extends ConsumerState<OrderScreen> {
+
+  @override
+  void initState() {
+    super.initState();
+
+    ref.read(orderProvider.notifier).paginate(forceRefetch: true);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return PaginationListView<OrderModel>(
+      provider: orderProvider,
+      itemBuilder: <OrderModel>(_, index, model) {
+        return OrderCard.fromModel(
+          model: model,
+        );
+      },
+    );
+  }
+}
+```
+
+fix
+Future.microtask or WidgetsBinding 사용해서 지연 실행
+```dart
+class OrderScreen extends ConsumerStatefulWidget {
+  const OrderScreen({super.key});
+
+  @override
+  ConsumerState<ConsumerStatefulWidget> createState() => _OrderScreenState();
+}
+
+class _OrderScreenState extends ConsumerState<OrderScreen> {
+
+  @override
+  void initState() {
+    super.initState();
+
+    /// 1번 방법
+    Future.microtask(
+      () => ref.read(orderProvider.notifier).paginate(forceRefetch: true),
+    );
+    
+                    // 또는
+    
+    /// 2번 방법
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      ref.read(orderProvider.notifier).paginate(forceRefetch: true);
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return PaginationListView<OrderModel>(
+      provider: orderProvider,
+      itemBuilder: <OrderModel>(_, index, model) {
+        return OrderCard.fromModel(
+          model: model,
+        );
+      },
+    );
+  }
+}
+```
