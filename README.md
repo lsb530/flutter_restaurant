@@ -160,6 +160,81 @@ fix
 import 'package:retrofit/retrofit.dart';
 ```
 
+### Debounce & Throttle: 함수 실행 빈도 제어
+- `Debounce`: 
+  - 정의: 일정 시간 동안 입력(이벤트)이 추가로 발생하지 않을 때 `마지막 입력만 처리`한다.
+  - 사용 예시)
+    - 메뉴를 여러번 클릭하거나, 장바구니에서 +를 여러번 요청할 때 API가 즉각적으로 반응될 필요가 없이 1번만 요청되도록 함
+    - 사용자가 검색창에 빠르게 텍스트를 입력할 때, 서버로 보내는 검색 요청 횟수를 줄이기 위해
+    
+- `Throttle`: 맨 처음 요청만 실행되도록 (이후 특정 시간동안 요청무시됨)
+- 정의: 정해진 간격 내에서 `최대 1회만 실행`되도록 제한한다.
+  - 사용 예시)
+    - 무한스크롤에서 맨 아래로 빠르게 스크롤을하여 스크롤 이벤트가 발생할 때마다 데이터 요청이 과도하게 일어나는 경우 3회 요청 -> 1회만 요청
+
+- 속성
+  - `checkEquality`: 함수를 실행할때 넣는 값이 똑같으면 실행하지 않을지 결정(false -> 인자가 같아도 강제 호출)
+```dart
+/// 객체 생성 - Debounce
+final updateBasketDebounce = Debouncer(
+  Duration(seconds: 1),
+  initialValue: null,
+  checkEquality: false,
+);
+
+/// 객체 생성 - Throttle
+final paginationThrottle = Throttle(
+  Duration(seconds: 3),
+  initialValue: _PaginationInfo(),
+  checkEquality: false,
+);
+
+/// 사용 - Debounce
+class BasketProvider extends StateNotifier<List<BasketItemModel>> {
+  final UserMeRepository repository;
+  final updateBasketDebounce = Debouncer(
+    Duration(seconds: 1),
+    initialValue: null,
+    checkEquality: false,
+  );
+  
+  BasketProvider({
+    required this.repository,
+  }) : super([]) {
+    /// Usage
+    updateBasketDebounce.values.listen(
+          (event) => patchBasket(),
+    );
+  }
+}
+
+/// 사용 - Throttle
+class PaginationProvider<
+T extends IModelWithId,
+U extends IBasePaginationRepository<T>
+> extends StateNotifier<CursorPaginationBase> {
+  final U repository;
+  final paginationThrottle = Throttle(
+    Duration(seconds: 3),
+    initialValue: _PaginationInfo(),
+    checkEquality: false,
+  );
+
+  PaginationProvider({
+    required this.repository,
+  }) : super(CursorPaginationLoading()) {
+    paginate();
+    
+    /// Usage
+    paginationThrottle.values.listen(
+          (state) {
+        _throttledPagination(state);
+      },
+    );
+  }
+}
+```
+
 ## Tips
 ### File Nesting
 - double shift -> File Nesting
