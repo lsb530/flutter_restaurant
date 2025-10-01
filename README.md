@@ -172,6 +172,10 @@ import 'package:badges/badges.dart';
 import 'package:flutter/material.dart' hide Badge;
 ```
 
+### RefreshIndicator
+- RefreshIndicator를 단순히 사용하면 Android 스타일만 제공된다.
+- RefreshIndicator.adaptive를 사용하면 Android, iOS 각각의 플랫폼에 맞는 스타일로 제공된다.
+
 ### Null-Safe Rendering vs Condition Rendering
 - Null-Safe Rendering
 ```dart
