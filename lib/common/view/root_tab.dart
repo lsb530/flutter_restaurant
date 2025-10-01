@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_restaurant/common/const/colors.dart';
 import 'package:flutter_restaurant/common/layout/default_layout.dart';
+import 'package:flutter_restaurant/feat/order/view/order_screen.dart';
 import 'package:flutter_restaurant/feat/product/view/product_screen.dart';
 import 'package:flutter_restaurant/feat/restaurant/view/restaurant_screen.dart';
 import 'package:flutter_restaurant/feat/user/view/profile_screen.dart';
@@ -44,16 +45,6 @@ class _RootTabState extends State<RootTab> with SingleTickerProviderStateMixin {
   Widget build(BuildContext context) {
     return DefaultLayout(
       title: '보기 딜리버리',
-      child: TabBarView(
-        physics: NeverScrollableScrollPhysics(),
-        controller: controller,
-        children: [
-          RestaurantScreen(),
-          ProductScreen(),
-          Center(child: Container(child: Text('주문'))),
-          ProfileScreen(),
-        ],
-      ),
       bottomNavigationBar: BottomNavigationBar(
         selectedItemColor: PRIMARY_COLOR,
         unselectedItemColor: BODY_TEXT_COLOR,
@@ -90,6 +81,16 @@ class _RootTabState extends State<RootTab> with SingleTickerProviderStateMixin {
             ),
             label: '프로필',
           ),
+        ],
+      ),
+      child: TabBarView(
+        physics: NeverScrollableScrollPhysics(),
+        controller: controller,
+        children: [
+          RestaurantScreen(),
+          ProductScreen(),
+          OrderScreen(),
+          ProfileScreen(),
         ],
       ),
     );
