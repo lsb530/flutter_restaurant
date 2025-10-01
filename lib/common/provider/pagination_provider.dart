@@ -1,8 +1,21 @@
+import 'package:debounce_throttle/debounce_throttle.dart';
 import 'package:flutter_restaurant/common/model/cursor_pagination_model.dart';
 import 'package:flutter_restaurant/common/model/model_with_id.dart';
 import 'package:flutter_restaurant/common/model/pagination_params.dart';
 import 'package:flutter_restaurant/common/repository/base_pagination_repository.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+class _PaginationInfo {
+  final int fetchCount;
+  final bool fetchMore;
+  final bool forceRefetch;
+
+  _PaginationInfo({
+    this.fetchCount = 20,
+    this.fetchMore = false,
+    this.forceRefetch = false,
+  });
+}
 
 class PaginationProvider<
   T extends IModelWithId,
@@ -10,11 +23,22 @@ class PaginationProvider<
 >
     extends StateNotifier<CursorPaginationBase> {
   final U repository;
+  final paginationThrottle = Throttle(
+    Duration(seconds: 3),
+    initialValue: _PaginationInfo(),
+    checkEquality: false,
+  );
 
   PaginationProvider({
     required this.repository,
   }) : super(CursorPaginationLoading()) {
     paginate();
+
+    paginationThrottle.values.listen(
+      (state) {
+        _throttledPagination(state);
+      },
+    );
   }
 
   Future<void> paginate({
@@ -24,6 +48,20 @@ class PaginationProvider<
     // 강제로 전체 데이터 삭제 후, 다시 로딩(true: CursorPaginationLoading())
     bool forceRefetch = false,
   }) async {
+    paginationThrottle.setValue(
+      _PaginationInfo(
+        fetchCount: fetchCount,
+        fetchMore: fetchMore,
+        forceRefetch: forceRefetch,
+      ),
+    );
+  }
+
+  _throttledPagination(_PaginationInfo info) async {
+    final fetchCount = info.fetchCount;
+    final fetchMore = info.fetchMore;
+    final forceRefetch = info.forceRefetch;
+
     try {
       // 5가지 State
       /// 1) CursorPagination - 정상적으로 데이터가 존재
