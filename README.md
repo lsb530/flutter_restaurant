@@ -1,6 +1,22 @@
 # flutter_restaurant
+플러터 레스토랑 프로젝트
 
-A new Flutter project.
+## Feat & Dependencies
+- dio
+- flutter_secure_storage
+- json_annotation
+- retrofit
+- logger
+- flutter_riverpod
+- skeletonizer
+- go_router
+- badges
+- intl
+- uuid
+- debounce_throttle
+- build_runner
+
+![flutter_restaurant_moving_img.gif](img/flutter_restaurant_moving_img.gif)
 
 ## Dev
 ### json_serializable
